@@ -1,1 +1,14 @@
+
+# Ignorar el entorno virtual
+venv/
+env/
+
+# Ignorar archivos de base de datos de Django
+db.sqlite3
 *.pyc
+__pycache__/
+
+# Ignorar configuraciones del sistema
+*.log
+*.env
+node_modules/

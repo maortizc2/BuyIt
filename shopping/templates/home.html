@@ -96,6 +96,21 @@
             </div>
         </div>
         <div class="text-center mt-12">
+            <div class="mt-12 grid md:grid-cols-3 gap-8">
+                {% for producto in productos %}
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                        <img src="{{ producto.productPicture }}" alt="{{ producto.productName }}" class="w-full h-48 object-cover rounded-lg mb-4">
+                        <h2 class="text-xl font-semibold text-sky-700 mb-2">{{ producto.productName }}</h2>
+                        <p class="text-sky-600 mb-2">{{ producto.productDescription }}</p>
+                        <p class="text-sky-800 font-bold">Precio: ${{ producto.productPrice }}</p>
+                        <a href="{{ producto.productBuyLink }}" target="_blank" class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mt-4">
+                            Comprar Ahora
+                        </a>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-gray-500 col-span-3">No hay productos disponibles.</p>
+                {% endfor %}
+            </div>
             <button class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
                 Start Buying 
             </button>

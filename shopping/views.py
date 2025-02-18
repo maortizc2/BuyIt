@@ -1,6 +1,6 @@
 from django.shortcuts import render
-
-# Create your views here.
+from .models import Product
 
 def home(request):
-    return render(request, 'home.html')
+    productos = Product.objects.all()  # Obtener todos los productos
+    return render(request, 'home.html', {'productos': productos})  # Enviar productos a la plantilla
