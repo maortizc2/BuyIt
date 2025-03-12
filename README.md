@@ -147,7 +147,7 @@ The platform does **not** handle **transactions** or **inventory management**, a
    ```
 2. Install dependencies:
    ```sh
-   npm install  # or pip install -r requirements.txt for Django
+   npm install  # or pip install -r requirements.txt
    ```
 3. Start the development server:
    ```sh
