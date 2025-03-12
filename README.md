@@ -175,5 +175,7 @@ We welcome contributions from developers, designers, and business strategists.
 ## Contact
 
 For inquiries or collaborations, feel free to reach out:  
-**Email:** *"Jose Alejandro Jimenez Vasquez" <jajimenez4@eafit.edu.co> & "Maria Alejandra Ortiz Correa" <maortizc2@eafit.edu.co> & "Valentina Aguilar Correa" <vaguilarc@eafit.edu.co>*  
+**Email:** *"Jose Alejandro Jimenez Vasquez" <jajimenez4@eafit.edu.co> &
+            "Maria Alejandra Ortiz Correa" <maortizc2@eafit.edu.co> & 
+            "Valentina Aguilar Correa" <vaguilarc@eafit.edu.co>*  
 **GitHub Issues:** [Report a bug or request a feature](https://github.com/maortizc2/BuyIt/issues)  
