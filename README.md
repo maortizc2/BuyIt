@@ -1,5 +1,3 @@
----
-
 # BuyIt - Smart Shopping Comparison Platform
 
 ## Table of Contents
@@ -181,4 +179,3 @@ For inquiries or collaborations, feel free to reach out:
 **GitHub Issues:** [Report a bug or request a feature](https://github.com/maortizc2/BuyIt/issues)  
 ```
 
----
