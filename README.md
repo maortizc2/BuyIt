@@ -134,7 +134,7 @@ The platform does **not** handle **transactions** or **inventory management**, a
 ## Getting Started
 
 ### Prerequisites:
-- Node.js / Python (depending on backend choice)
+- Node.js / Python 
 - PostgreSQL / MongoDB
 - React.js / Vue.js
 - Git & GitHub
