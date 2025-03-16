@@ -126,8 +126,8 @@ The platform does **not** handle **transactions** or **inventory management**, a
 ## Team Members
 
 - **Jose Alejandro Jimenez** - Lead Developer & AI Specialist  
-- **Valentina Aguilar** - UI/UX Designer & Frontend Developer  
-- **Maria Alejandra Ortiz** - Business Strategy & Data Compliance  
+- **Valentina Aguilar** - Business Strategy & Data Compliance   
+- **Maria Alejandra Ortiz** - UI/UX Designer & Frontend Developer
 
 ---
 
