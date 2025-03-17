@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuyIt - Compare and buy smart with the best experience  </title>
+    <title>BuyIt - Compare and buy smart with the best experience</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -66,54 +66,45 @@
         <p class="text-lg md:text-xl text-sky-800 text-center mb-8 max-w-2xl mx-auto animate-fade-in-up">
             BuyIt is a site to compare products based on your tastes and needs providing an experience as similar as possible to shopping in a mall.
         </p>
-        <div class="grid md:grid-cols-3 gap-8 mt-12">
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-                <div class="flex justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-                <h2 class="text-xl font-semibold text-sky-700 mb-2 text-center">Intelligent Search</h2>
-                <p class="text-sky-600 text-center">Find exactly what you need with our advanced search.</p>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-                <div class="flex justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                    </svg>
-                </div>
-                <h2 class="text-xl font-semibold text-sky-700 mb-2 text-center">Comparison</h2>
-                <p class="text-sky-600 text-center">Compare various products to make the best decision</p>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-                <div class="flex justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                </div>
-                <h2 class="text-xl font-semibold text-sky-700 mb-2 text-center">Experience</h2>
-                <p class="text-sky-600 text-center">Enjoy buying like in a shopping mall.</p>
-            </div>
-        </div>
         <div class="text-center mt-12">
-            <div class="mt-12 grid md:grid-cols-3 gap-8">
-                {% for producto in productos %}
-                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-                        <img src="{{ producto.productPicture }}" alt="{{ producto.productName }}" class="w-full h-48 object-cover rounded-lg mb-4">
-                        <h2 class="text-xl font-semibold text-sky-700 mb-2">{{ producto.productName }}</h2>
-                        <p class="text-sky-600 mb-2">{{ producto.productDescription }}</p>
-                        <p class="text-sky-800 font-bold">Precio: ${{ producto.productPrice }}</p>
-                        <a href="{{ producto.productBuyLink }}" target="_blank" class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mt-4">
-                            Comprar Ahora
-                        </a>
-                    </div>
-                {% empty %}
-                    <p class="text-center text-gray-500 col-span-3">No hay productos disponibles.</p>
-                {% endfor %}
-            </div>
-            <button class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
-                Start Buying 
-            </button>
+            {% if user.is_authenticated %}
+                <div class="mb-6">
+                    <!-- Botón para cerrar sesión -->
+                    <a href="{% url 'accounts:logout' %}" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+                        Cerrar Sesión
+                    </a>
+                </div>
+                <div class="mt-12 grid md:grid-cols-3 gap-8">
+                    {% for producto in productos %}
+                        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                            <img src="{{ producto.productPicture }}" alt="{{ producto.productName }}" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <h2 class="text-xl font-semibold text-sky-700 mb-2">{{ producto.productName }}</h2>
+                            <p class="text-sky-600 mb-2">{{ producto.productDescription }}</p>
+                            <p class="text-sky-800 font-bold">Precio: ${{ producto.productPrice }}</p>
+                            <a href="{{ producto.productBuyLink }}" target="_blank" class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mt-4">
+                                Comprar Ahora
+                            </a>
+                        </div>
+                    {% empty %}
+                        <p class="text-center text-gray-500 col-span-3">No hay productos disponibles.</p>
+                    {% endfor %}
+                </div>
+                <button class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mt-6">
+                    Start Buying 
+                </button>
+            {% else %}
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-sky-700 mb-4">Acceso Restringido</h2>
+                    <p class="text-sky-600 mb-4">Debes registrarte o iniciar sesión para ver los productos.</p>
+                    <a href="{% url 'accounts:register' %}" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+                        Registrarse
+                    </a>
+                    <span class="mx-2">o</span>
+                    <a href="{% url 'accounts:login' %}" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+                        Iniciar Sesión
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </main>
 </body>

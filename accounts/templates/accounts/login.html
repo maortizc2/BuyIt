@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - BuyIt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sky: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            },
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .animate-fade-in {
+      animation: fadeIn 1s ease-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-sky-50 font-sans">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-8 animate-fade-in">
+      Iniciar Sesión en BuyIt
+    </h1>
+    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="mb-4 text-center text-sm {% if message.tags %}text-{{ message.tags }}-600{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-4">
+          <label for="username" class="block text-sky-700 font-semibold mb-2">Usuario</label>
+          <input type="text" name="username" id="username" class="w-full p-2 border border-gray-300 rounded" required>
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block text-sky-700 font-semibold mb-2">Contraseña</label>
+          <input type="password" name="password" id="password" class="w-full p-2 border border-gray-300 rounded" required>
+        </div>
+        <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+          Iniciar Sesión
+        </button>
+      </form>
+      <p class="mt-4 text-center text-sky-600">
+        ¿No tienes una cuenta? <a href="{% url 'accounts:register' %}" class="text-sky-800 font-semibold">Regístrate</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>

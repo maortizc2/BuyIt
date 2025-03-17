@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrarse - BuyIt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sky: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            },
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .animate-fade-in {
+      animation: fadeIn 1s ease-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-sky-50 font-sans">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-8 animate-fade-in">
+      Registrarse en BuyIt
+    </h1>
+    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="mb-4 text-center text-sm {% if message.tags %}text-{{ message.tags }}-600{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-4">
+          <label for="id_username" class="block text-sky-700 font-semibold mb-2">Usuario</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <p class="text-red-600 text-sm">{{ form.username.errors }}</p>
+          {% endif %}
+        </div>
+        <div class="mb-4">
+          <label for="id_email" class="block text-sky-700 font-semibold mb-2">Correo Electrónico</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <p class="text-red-600 text-sm">{{ form.email.errors }}</p>
+          {% endif %}
+        </div>
+        <div class="mb-4">
+          <label for="id_first_name" class="block text-sky-700 font-semibold mb-2">Nombre</label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}
+            <p class="text-red-600 text-sm">{{ form.first_name.errors }}</p>
+          {% endif %}
+        </div>
+        <div class="mb-4">
+          <label for="id_last_name" class="block text-sky-700 font-semibold mb-2">Apellido</label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}
+            <p class="text-red-600 text-sm">{{ form.last_name.errors }}</p>
+          {% endif %}
+        </div>
+        <div class="mb-4">
+          <label for="id_password" class="block text-sky-700 font-semibold mb-2">Contraseña</label>
+          {{ form.password }}
+          {% if form.password.errors %}
+            <p class="text-red-600 text-sm">{{ form.password.errors }}</p>
+          {% endif %}
+        </div>
+        <div class="mb-4">
+          <label for="id_confirm_password" class="block text-sky-700 font-semibold mb-2">Confirmar Contraseña</label>
+          {{ form.confirm_password }}
+          {% if form.confirm_password.errors %}
+            <p class="text-red-600 text-sm">{{ form.confirm_password.errors }}</p>
+          {% endif %}
+        </div>
+        {% if form.non_field_errors %}
+          <div class="mb-4 text-red-600 text-center">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+        <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+          Registrarse
+        </button>
+      </form>
+      <p class="mt-4 text-center text-sky-600">
+        ¿Ya tienes una cuenta? <a href="{% url 'accounts:login' %}" class="text-sky-800 font-semibold">Inicia sesión</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>
