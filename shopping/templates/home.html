@@ -56,24 +56,31 @@
     </style>
 </head>
 <body class="min-h-screen bg-sky-50 font-sans">
-    <!-- Header con menú desplegable -->
+    <!-- Header con logo, búsqueda y menú desplegable -->
     <header class="flex items-center justify-between bg-white p-4 shadow">
-        <!-- Logo -->
-        <div class="logo">
-            <h1 class="text-2xl font-bold text-sky-600">BuyIt</h1>
+        <!-- Izquierda: Logo y barra de búsqueda -->
+        <div class="flex items-center space-x-4">
+            <!-- Logo: Enlace a la página principal -->
+            <div class="logo">
+                <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600">BuyIt</a>
+            </div>
+            <!-- Barra de búsqueda -->
+            <form action="{% url 'search_products' %}" method="get" class="flex items-center space-x-2">
+                <input type="text" name="q" placeholder="Buscar productos..." required class="p-2 border border-gray-300 rounded-l-md focus:outline-none">
+                <button type="submit" class="p-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-700">
+                    Buscar
+                </button>
+            </form>
         </div>
-        <!-- Menú desplegable del usuario -->
+        <!-- Derecha: Menú desplegable de usuario -->
         {% if user.is_authenticated %}
         <div class="relative inline-block text-left">
-            <!-- Botón para mostrar el menú -->
             <button id="user-menu-button" class="inline-flex justify-center items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none" aria-expanded="true" aria-haspopup="true">
-                Menú de Usuario
-                <!-- Icono de flecha -->
+                Menú 
                 <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
                 </svg>
             </button>
-            <!-- Menú desplegable -->
             <div id="user-dropdown" class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
                 <div class="py-1" role="none">
                     <a href="{% url 'favoritos_view' %}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
@@ -97,12 +104,6 @@
         </p>
         <div class="text-center mt-12">
             {% if user.is_authenticated %}
-                <div class="mb-6">
-                    <!-- Botón para cerrar sesión (opción alternativa fuera del menú) -->
-                    <a href="{% url 'accounts:logout' %}" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
-                        Cerrar Sesión
-                    </a>
-                </div>
                 <div class="mt-12 grid md:grid-cols-3 gap-8">
                     {% for producto in productos %}
                         <!-- Tarjeta de producto con funcionalidad de favoritos -->
@@ -118,7 +119,6 @@
                             <form action="{% url 'toggle_favorito' producto.id %}" method="post" class="mt-2">
                                 {% csrf_token %}
                                 <button type="submit" class="text-sky-600 hover:text-sky-800">
-                                    <!-- Ícono de corazón usando FontAwesome -->
                                     <i class="fa{% if producto in user.favorite_products.all %}s{% else %}r{% endif %} fa-heart"></i> Favorito
                                 </button>
                             </form>
@@ -167,3 +167,4 @@
     </script>
 </body>
 </html>
+

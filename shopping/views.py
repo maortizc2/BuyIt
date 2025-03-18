@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Product
+from django.db.models import Q
 
 def home(request):
     context = {}
@@ -25,3 +26,17 @@ def favoritos_view(request):
     favoritos = request.user.favorite_products.all()
     return render(request, 'favoritos.html', {'favoritos': favoritos})
 
+
+
+def search_products(request):
+    query = request.GET.get('q')
+    results = Product.objects.none()
+    if query:
+        results = Product.objects.filter(
+            Q(productName__icontains=query) | Q(productDescription__icontains=query)
+        )
+    context = {
+        'query': query,
+        'results': results,
+    }
+    return render(request, 'buscar.html', context)

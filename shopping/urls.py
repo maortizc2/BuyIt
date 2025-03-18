@@ -6,4 +6,5 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('toggle-favorito/<int:producto_id>/', views.toggle_favorito, name='toggle_favorito'),
     path('favoritos/', views.favoritos_view, name='favoritos_view'),
+    path('search/', views.search_products, name='search_products'),
 ]
