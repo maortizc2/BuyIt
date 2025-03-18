@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Product(models.Model):
     productName = models.CharField(max_length=200)
@@ -17,6 +18,10 @@ class Product(models.Model):
     productStock = models.PositiveIntegerField(default=10)  # Un control de stock simple
     productBuyLink = models.URLField()  # Link oficial de compra
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Relación ManyToMany para productos favoritos
+    favorited_by = models.ManyToManyField(User, related_name='favorite_products', blank=True)
 
     def __str__(self):
         return self.productName
+

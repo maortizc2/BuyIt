@@ -37,7 +37,6 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -48,17 +47,47 @@
                 transform: translateY(0);
             }
         }
-
         .animate-fade-in {
             animation: fadeIn 1s ease-out;
         }
-
         .animate-fade-in-up {
             animation: fadeInUp 1s ease-out;
         }
     </style>
 </head>
 <body class="min-h-screen bg-sky-50 font-sans">
+    <!-- Header con menú desplegable -->
+    <header class="flex items-center justify-between bg-white p-4 shadow">
+        <!-- Logo -->
+        <div class="logo">
+            <h1 class="text-2xl font-bold text-sky-600">BuyIt</h1>
+        </div>
+        <!-- Menú desplegable del usuario -->
+        {% if user.is_authenticated %}
+        <div class="relative inline-block text-left">
+            <!-- Botón para mostrar el menú -->
+            <button id="user-menu-button" class="inline-flex justify-center items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none" aria-expanded="true" aria-haspopup="true">
+                Menú de Usuario
+                <!-- Icono de flecha -->
+                <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <!-- Menú desplegable -->
+            <div id="user-dropdown" class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
+                <div class="py-1" role="none">
+                    <a href="{% url 'favoritos_view' %}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
+                        Productos Favoritos
+                    </a>
+                    <a href="{% url 'accounts:logout' %}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
+                        Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </header>
+
     <main class="container mx-auto px-4 py-8 md:py-16">
         <h1 class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-4 animate-fade-in">
             BuyIt
@@ -69,13 +98,14 @@
         <div class="text-center mt-12">
             {% if user.is_authenticated %}
                 <div class="mb-6">
-                    <!-- Botón para cerrar sesión -->
+                    <!-- Botón para cerrar sesión (opción alternativa fuera del menú) -->
                     <a href="{% url 'accounts:logout' %}" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                         Cerrar Sesión
                     </a>
                 </div>
                 <div class="mt-12 grid md:grid-cols-3 gap-8">
                     {% for producto in productos %}
+                        <!-- Tarjeta de producto con funcionalidad de favoritos -->
                         <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
                             <img src="{{ producto.productPicture }}" alt="{{ producto.productName }}" class="w-full h-48 object-cover rounded-lg mb-4">
                             <h2 class="text-xl font-semibold text-sky-700 mb-2">{{ producto.productName }}</h2>
@@ -84,6 +114,14 @@
                             <a href="{{ producto.productBuyLink }}" target="_blank" class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mt-4">
                                 Comprar Ahora
                             </a>
+                            <!-- Botón para agregar o quitar de favoritos -->
+                            <form action="{% url 'toggle_favorito' producto.id %}" method="post" class="mt-2">
+                                {% csrf_token %}
+                                <button type="submit" class="text-sky-600 hover:text-sky-800">
+                                    <!-- Ícono de corazón usando FontAwesome -->
+                                    <i class="fa{% if producto in user.favorite_products.all %}s{% else %}r{% endif %} fa-heart"></i> Favorito
+                                </button>
+                            </form>
                         </div>
                     {% empty %}
                         <p class="text-center text-gray-500 col-span-3">No hay productos disponibles.</p>
@@ -107,5 +145,25 @@
             {% endif %}
         </div>
     </main>
+    <!-- Carga de FontAwesome -->
+    <script src="https://kit.fontawesome.com/tu-codigo-de-kit.js" crossorigin="anonymous"></script>
+    <!-- Script para el menú desplegable -->
+    <script>
+        const menuButton = document.getElementById('user-menu-button');
+        const dropdown = document.getElementById('user-dropdown');
+
+        if(menuButton){
+            menuButton.addEventListener('click', () => {
+                dropdown.classList.toggle('hidden');
+            });
+        }
+
+        // Cierra el menú al hacer clic fuera
+        window.addEventListener('click', function(e) {
+            if (menuButton && !menuButton.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 </html>
