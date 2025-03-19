@@ -1,0 +1,7 @@
+pip
+notifications
+matplotlib
+django
+dialogflow
+
+
