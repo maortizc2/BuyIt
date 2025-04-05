@@ -12,3 +12,8 @@ __pycache__/
 *.log
 *.env
 node_modules/
+
+#Para evitar que se suba al repositorio 
+api_keys.env
+*.env
+.env

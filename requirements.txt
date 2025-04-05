@@ -1,7 +1,10 @@
-pip
-notifications
 matplotlib
 django
-dialogflow
+requests
+beautifulsoup4
+selenium
+openai
+webdriver-manager
+python-dotenv
 
 

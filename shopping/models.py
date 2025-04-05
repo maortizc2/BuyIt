@@ -17,6 +17,8 @@ class Product(models.Model):
     productBrand = models.CharField(max_length=100)  # Para almacenar la marca
     productStock = models.PositiveIntegerField(default=10)  # Un control de stock simple
     productBuyLink = models.URLField()  # Link oficial de compra
+    productLink = models.URLField(unique=True)  # Para evitar productos repetidos
+    productOrigin = models.CharField(max_length=100, default='')  # Página web origen
     created_at = models.DateTimeField(auto_now_add=True)
     
     # Relación ManyToMany para productos favoritos

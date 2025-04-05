@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Product
 from django.db.models import Q
 
+
 def home(request):
     context = {}
     if request.user.is_authenticated:
@@ -20,13 +21,10 @@ def toggle_favorito(request, producto_id):
         user.favorite_products.add(producto)
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-
 @login_required
 def favoritos_view(request):
     favoritos = request.user.favorite_products.all()
     return render(request, 'favoritos.html', {'favoritos': favoritos})
-
-
 
 def search_products(request):
     query = request.GET.get('q')
@@ -40,3 +38,9 @@ def search_products(request):
         'results': results,
     }
     return render(request, 'buscar.html', context)
+
+#funcion para cargar los productos del scraping 
+def productos_externos(request):
+    productos = Product.objects.all().order_by('-created_at')  # Opcional: los más nuevos primero
+    return render(request, 'externos.html', {'productos': productos})
+

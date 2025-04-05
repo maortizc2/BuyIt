@@ -1,0 +1,16 @@
+<!-- Parte del codigo donde se estructuran los productos , este codigo se utiliza en el scraping -->
+{% extends "base.html" %}
+{% block content %}
+<h2 style="text-align:center;">Productos Scrapeados</h2>
+<div style="display: flex; flex-wrap: wrap; justify-content: center;">
+    {% for p in productos %}
+    <div style="width: 220px; margin: 15px; border: 1px solid #ccc; border-radius: 10px; padding: 10px; text-align: center;">
+        <img src="{{ p.productPicture }}" width="180px" alt="{{ p.productName }}">
+        <h4>{{ p.productName }}</h4>
+        <p><strong>${{ p.productPrice }}</strong></p>
+        <p><em>{{ p.productBrand }} - {{ p.productCategory }}</em></p>
+        <a href="{{ p.productBuyLink }}" target="_blank">Ver producto</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
