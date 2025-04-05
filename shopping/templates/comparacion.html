@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comparación Inteligente - BuyIt</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              sky: {
+                50: "#f0f9ff",
+                100: "#e0f2fe",
+                200: "#bae6fd",
+                300: "#7dd3fc",
+                400: "#38bdf8",
+                500: "#0ea5e9",
+                600: "#0284c7",
+                700: "#0369a1",
+                800: "#075985",
+                900: "#0c4a6e",
+              },
+            },
+            fontFamily: {
+              sans: ["Poppins", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.8s ease-out;
+      }
+    </style>
+  </head>
+  <body class="bg-sky-50 min-h-screen font-sans text-gray-800">
+    <!-- Header adaptado al diseño base -->
+    <header class="flex items-center justify-between bg-white p-4 shadow">
+      <div class="logo">
+        <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600"
+          >BuyIt</a
+        >
+      </div>
+      {% if user.is_authenticated %}
+      <div class="relative inline-block text-left">
+        <button
+          id="user-menu-button"
+          class="inline-flex justify-center items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+        >
+          Menú
+          <svg
+            class="ml-2 h-5 w-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+        <div
+          id="user-dropdown"
+          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden"
+        >
+          <div class="py-1">
+            <a
+              href="{% url 'favoritos_view' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >Favoritos</a
+            >
+            <a
+              href="{% url 'accounts:logout' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >Cerrar Sesión</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+      <h1
+        class="text-4xl md:text-5xl font-bold text-center text-sky-700 fade-in mb-10"
+      >
+        🧠 Comparación de Productos
+      </h1>
+
+      <div
+        id="comparador"
+        class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in transition-all duration-500"
+      >
+        <!-- Producto A -->
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <img
+            src="{{ producto_a.imagen }}"
+            alt="{{ producto_a.nombre }}"
+            class="mx-auto h-64 object-contain rounded mb-4"
+          />
+          <h2 class="text-xl font-bold text-sky-700 mb-1">
+            {{ producto_a.nombre }}
+          </h2>
+          <p class="text-sky-800 font-semibold mb-1">
+            Precio: {{ producto_a.precio }}
+          </p>
+          <p class="mb-1">
+            <span class="font-medium text-gray-600">Categoría:</span> {{
+            producto_a.categoria }}
+          </p>
+          <p class="mb-1">
+            <span class="font-medium text-gray-600">Origen:</span> {{
+            producto_a.origen }}
+          </p>
+          <a
+            href="{{ producto_a.link }}"
+            target="_blank"
+            class="inline-block mt-4 px-4 py-2 bg-sky-600 text-white font-semibold rounded hover:bg-sky-700 transition"
+            >Ver Producto</a
+          >
+        </div>
+
+        <!-- Producto B -->
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <img
+            src="{{ producto_b.imagen }}"
+            alt="{{ producto_b.nombre }}"
+            class="mx-auto h-64 object-contain rounded mb-4"
+          />
+          <h2 class="text-xl font-bold text-sky-700 mb-1">
+            {{ producto_b.nombre }}
+          </h2>
+          <p class="text-sky-800 font-semibold mb-1">
+            Precio: {{ producto_b.precio }}
+          </p>
+          <p class="mb-1">
+            <span class="font-medium text-gray-600">Categoría:</span> {{
+            producto_b.categoria }}
+          </p>
+          <p class="mb-1">
+            <span class="font-medium text-gray-600">Origen:</span> {{
+            producto_b.origen }}
+          </p>
+          <a
+            href="{{ producto_b.link }}"
+            target="_blank"
+            class="inline-block mt-4 px-4 py-2 bg-sky-600 text-white font-semibold rounded hover:bg-sky-700 transition"
+            >Ver Producto</a
+          >
+        </div>
+      </div>
+
+      <!-- Análisis IA -->
+      <section class="mt-12 bg-white p-8 rounded-xl shadow fade-in">
+        <h2 class="text-2xl font-bold text-sky-700 mb-4">
+          📊 Análisis Profesional con IA
+        </h2>
+        <pre
+          class="whitespace-pre-wrap bg-gray-50 text-gray-700 p-6 rounded-md text-sm leading-relaxed border border-sky-100"
+        >
+{{ analisis_ai }}
+            </pre
+        >
+        <div class="text-center mt-6">
+          <a
+            href="{% url 'home' %}"
+            class="inline-block px-6 py-3 bg-red-100 text-red-600 font-semibold rounded-full hover:bg-red-200 transition-all duration-300"
+          >
+            ❌ Cerrar Comparación
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const menuButton = document.getElementById("user-menu-button");
+      const dropdown = document.getElementById("user-dropdown");
+      if (menuButton) {
+        menuButton.addEventListener("click", () => {
+          dropdown.classList.toggle("hidden");
+        });
+      }
+      window.addEventListener("click", function (e) {
+        if (
+          menuButton &&
+          !menuButton.contains(e.target) &&
+          !dropdown.contains(e.target)
+        ) {
+          dropdown.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>
