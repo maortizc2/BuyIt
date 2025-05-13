@@ -273,30 +273,6 @@
       {% endif %}
     </main>
 
-<<<<<<< HEAD
-  <div id="compare-bar" class="compare-bar hidden">
-    <span class="font-semibold text-white"
-      >Comparar 2 productos seleccionados</span
-    >
-    <button
-      onclick="enviarComparacion()"
-      class="bg-white text-sky-600 font-bold px-6 py-2 rounded hover:bg-sky-100 transition"
-    >
-      Comparar
-    </button>
-  </div>
-
-  <form
-    id="real-compare-form"
-    method="post"
-    action="{% url 'comparar_productos' %}"
-    class="hidden"
-  >
-    {% csrf_token %}
-    <input type="hidden" name="producto_a" id="producto_a_input" />
-    <input type="hidden" name="producto_b" id="producto_b_input" />
-  </form>
-=======
     <script>
       const menuButton = document.getElementById("user-menu-button");
       const dropdown = document.getElementById("user-dropdown");
@@ -314,7 +290,6 @@
       const checkboxes = document.querySelectorAll(".comparar-checkbox");
       const compareBar = document.getElementById("compare-bar");
       const selectButtons = document.querySelectorAll(".select-button");
->>>>>>> a94ad9b (🛠 Guardado temporal antes de integrar cambios)
 
       function updateCompareState() {
         const selected = Array.from(checkboxes).filter((cb) => cb.checked);
@@ -334,48 +309,6 @@
         });
       }
 
-<<<<<<< HEAD
-<style>
-  .compare-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #0284c7;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 50;
-    transition: all 0.3s ease;
-  }
-</style>
-
-<script>
-  const checkboxes = document.querySelectorAll(".comparar-checkbox");
-  const compareBar = document.getElementById("compare-bar");
-  const selectButtons = document.querySelectorAll(".select-button");
-  const selectedStorage = JSON.parse(
-    localStorage.getItem("selectedProducts") || "[]"
-  );
-
-  function updateCompareState() {
-    const selected = Array.from(checkboxes).filter((cb) => cb.checked);
-    compareBar.classList.toggle("hidden", selected.length !== 2);
-    checkboxes.forEach((cb) =>
-      cb
-        .closest("div")
-        .classList.remove("ring", "ring-4", "ring-sky-500", "scale-105")
-    );
-    selected.forEach((cb) =>
-      cb
-        .closest("div")
-        .classList.add("ring", "ring-4", "ring-sky-500", "scale-105")
-    );
-    if (selected.length === 2) {
-      checkboxes.forEach((cb) => {
-        if (!cb.checked) cb.disabled = true;
-=======
       function enviarComparacion() {
         const seleccionados = Array.from(checkboxes).filter((cb) => cb.checked);
         if (seleccionados.length === 2) {
@@ -395,7 +328,6 @@
           cb.checked = !cb.checked;
           updateCompareState();
         });
->>>>>>> a94ad9b (🛠 Guardado temporal antes de integrar cambios)
       });
 
       checkboxes.forEach((cb) => {
