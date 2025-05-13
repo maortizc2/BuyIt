@@ -2,14 +2,20 @@
 {% extends "base.html" %}
 {% block content %}
 <h2 style="text-align:center;">Productos Scrapeados</h2>
+
 <div style="display: flex; flex-wrap: wrap; justify-content: center;">
     {% for p in productos %}
-    <div style="width: 220px; margin: 15px; border: 1px solid #ccc; border-radius: 10px; padding: 10px; text-align: center;">
+    <div style="width: 220px; margin: 15px; border: 1px solid #ccc; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 2px 2px 5px #ccc;">
         <img src="{{ p.productPicture }}" width="180px" alt="{{ p.productName }}">
         <h4>{{ p.productName }}</h4>
         <p><strong>${{ p.productPrice }}</strong></p>
         <p><em>{{ p.productBrand }} - {{ p.productCategory }}</em></p>
-        <a href="{{ p.productBuyLink }}" target="_blank">Ver producto</a>
+
+        <!-- Botón para comprar -->
+        <a href="{{ p.productBuyLink }}" target="_blank" class="btn btn-primary btn-sm" style="margin: 5px;">Comprar</a>
+
+        <!-- Enlace al detalle del producto -->
+        <a href="{% url 'detalle_producto' p.id %}" class="btn btn-outline-info btn-sm">Ver detalles y reseñas</a>
     </div>
     {% endfor %}
 </div>

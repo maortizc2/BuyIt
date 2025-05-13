@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Imagen y detalles principales -->
+        <div class="col-md-5">
+            <img src="{{ producto.productPicture }}" class="img-fluid rounded" alt="{{ producto.productName }}">
+        </div>
+        <div class="col-md-7">
+            <h2>{{ producto.productName }}</h2>
+            <div class="mb-3">
+                <!-- Mostrar estrellas dinámicamente -->
+                <div class="rating-stars">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= promedio|floatformat:"0" %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% elif forloop.counter <= promedio|add:"0.5"|floatformat:"0" %}
+                            <i class="fas fa-star-half-alt text-warning"></i>
+                        {% else %}
+                            <i class="far fa-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                    <span class="ms-1">{{ promedio }} ({{ reseñas|length }} reseñas)</span>
+                </div>
+            </div>
+            <h3 class="text-primary">${{ producto.productPrice }}</h3>
+            <p><strong>Marca:</strong> {{ producto.productBrand }}</p>
+            <p><strong>Categoría:</strong> {{ producto.productCategory }}</p>
+            <p><strong>Descripción:</strong> {{ producto.productDescription }}</p>
+            <a href="{{ producto.productBuyLink }}" target="_blank" class="btn btn-primary">Comprar ahora</a>
+            
+            {% if user.is_authenticated %}
+                {% if producto in user.favorite_products.all %}
+                    <a href="{% url 'toggle_favorito' producto.id %}" class="btn btn-outline-danger">
+                        <i class="fas fa-heart"></i> Quitar de favoritos
+                    </a>
+                {% else %}
+                    <a href="{% url 'toggle_favorito' producto.id %}" class="btn btn-outline-danger">
+                        <i class="far fa-heart"></i> Añadir a favoritos
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Sección de reseñas -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3>Reseñas y calificaciones</h3>
+            <hr>
+        </div>
+    </div>
+    
+    <!-- Formulario para escribir reseñas -->
+    {% if user.is_authenticated %}
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4>Escribe una reseña</h4>
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Sistema de calificación por estrellas interactivo -->
+                        <div class="mb-3">
+                            <label for="calificacion" class="form-label">Tu calificación:</label>
+                            <div class="star-rating">
+                                {% for i in "12345"|make_list %}
+                                <input type="radio" id="star{{ i }}" name="calificacion" value="{{ i }}" required>
+                                <label for="star{{ i }}" class="star-label">
+                                    <i class="far fa-star"></i>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="texto" class="form-label">Tu opinión:</label>
+                            <textarea name="texto" id="texto" class="form-control" rows="4" placeholder="Comparte tu experiencia con este producto..." required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Publicar reseña</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="alert alert-info">
+                <p class="mb-0"><a href="{% url 'login' %}">Inicia sesión</a> para dejar una reseña.</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Lista de reseñas -->
+    <div class="row">
+        <div class="col-md-8">
+            {% for r in reseñas %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">{{ r.usuario.username }}</h5>
+                        <div class="text-warning">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= r.calificacion %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="card-text">{{ r.texto }}</p>
+                    <small class="text-muted">{{ r.fecha|date:"d/m/Y H:i" }}</small>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-light">
+                <p>No hay reseñas todavía. ¡Sé el primero en opinar sobre este producto!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Estilos específicos para la calificación por estrellas -->
+<style>
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    
+    .star-rating input {
+        display: none;
+    }
+    
+    .star-rating label {
+        cursor: pointer;
+        font-size: 1.5rem;
+        padding: 0 0.2rem;
+        color: #ddd;
+    }
+    
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: #ffc107;
+    }
+    
+    .star-rating input:checked ~ label i.far.fa-star:before {
+        content: "\f005";
+        font-weight: 900;
+    }
+    
+    .star-rating label:hover i.far.fa-star:before,
+    .star-rating label:hover ~ label i.far.fa-star:before {
+        content: "\f005";
+        font-weight: 900;
+    }
+</style>
+{% endblock %}

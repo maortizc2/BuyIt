@@ -1,245 +1,108 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mis Favoritos - BuyIt</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              sky: {
-                50: "#f0f9ff",
-                100: "#e0f2fe",
-                200: "#bae6fd",
-                300: "#7dd3fc",
-                400: "#38bdf8",
-                500: "#0ea5e9",
-                600: "#0284c7",
-                700: "#0369a1",
-                800: "#075985",
-                900: "#0c4a6e",
-              },
-            },
-            fontFamily: {
-              sans: ["Poppins", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
-    <style>
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .animate-fade-in {
-        animation: fadeIn 1s ease-out;
-      }
-      .animate-fade-in-up {
-        animation: fadeInUp 1s ease-out;
-      }
-      .comparar-bar {
-        animation: fadeIn 0.5s ease-in-out;
-      }
-      .selected-shadow {
-        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.4);
-      }
-    </style>
-  </head>
-  <body class="min-h-screen bg-sky-50 font-sans">
-    <header class="flex items-center justify-between bg-white p-4 shadow">
-      <div class="logo">
-        <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600"
-          >BuyIt</a
-        >
-      </div>
-      {% if user.is_authenticated %}
-      <div class="relative inline-block text-left">
-        <button
-          id="user-menu-button"
-          class="inline-flex justify-center items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
-        >
-          Menú de Usuario
-          <svg
-            class="ml-2 h-5 w-5"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </button>
-        <div
-          id="user-dropdown"
-          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
-        >
-          <div class="py-1">
-            <a
-              href="{% url 'favoritos_view' %}"
-              class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
-              >Productos Favoritos</a
-            >
-            <a
-              href="{% url 'accounts:logout' %}"
-              class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
-              >Cerrar Sesión</a
-            >
-          </div>
-        </div>
-      </div>
-      {% endif %}
-    </header>
 
-    <main class="container mx-auto px-4 py-8 md:py-16">
-      <h1
-        class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-4 animate-fade-in"
-      >
-        Mis Productos Favoritos
-      </h1>
+{% block title %}Mis Favoritos - BuyIt{% endblock %}
 
-      <form
-        method="POST"
-        action="{% url 'comparar_productos' %}"
-        id="form-comparar"
-      >
+{% block extra_head %}
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in { animation: fadeIn 1s ease-out; }
+  .animate-fade-in-up { animation: fadeInUp 1s ease-out; }
+  .comparar-bar { animation: fadeIn 0.5s ease-in-out; }
+  .selected-shadow {
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.4);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-4 animate-fade-in">
+  Mis Productos Favoritos
+</h1>
+
+<form method="POST" action="{% url 'comparar_productos' %}" id="form-comparar">
+  {% csrf_token %}
+  <input type="hidden" name="producto_a" id="producto_a" />
+  <input type="hidden" name="producto_b" id="producto_b" />
+
+  <div class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white shadow-xl rounded-full px-6 py-3 z-50 comparar-bar" id="barraComparar">
+    <p class="text-sky-700 font-semibold">¿Listo para comparar?</p>
+    <button type="submit" class="ml-4 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-full font-bold transition-all">
+      Comparar Ahora
+    </button>
+  </div>
+
+  {% if favoritos %}
+  <div class="mt-12 grid md:grid-cols-3 gap-8">
+    {% for producto in favoritos %}
+    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 group producto-card cursor-pointer" data-id="{{ producto.id }}">
+      <img src="{{ producto.productPicture }}" alt="{{ producto.productName }}" class="w-full h-48 object-cover rounded-lg mb-4" />
+      <h2 class="text-xl font-semibold text-sky-700 mb-2">{{ producto.productName }}</h2>
+      <p class="text-sky-600 mb-2">{{ producto.productDescription }}</p>
+      <p class="text-sky-800 font-bold">Precio: ${{ producto.productPrice }}</p>
+      <a href="{{ producto.productBuyLink }}" target="_blank" class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition transform hover:scale-105 mt-4">Comprar Ahora</a>
+      <form action="{% url 'toggle_favorito' producto.id %}" method="post" class="mt-2">
         {% csrf_token %}
-        <input type="hidden" name="producto_a" id="producto_a" />
-        <input type="hidden" name="producto_b" id="producto_b" />
-
-        <div
-          class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white shadow-xl rounded-full px-6 py-3 z-50 comparar-bar"
-          id="barraComparar"
-        >
-          <p class="text-sky-700 font-semibold">¿Listo para comparar?</p>
-          <button
-            type="submit"
-            class="ml-4 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-full font-bold transition-all"
-          >
-            Comparar Ahora
-          </button>
-        </div>
-
-        {% if favoritos %}
-        <div class="mt-12 grid md:grid-cols-3 gap-8">
-          {% for producto in favoritos %}
-          <div
-            class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 group producto-card cursor-pointer"
-            data-id="{{ producto.id }}"
-          >
-            <img
-              src="{{ producto.productPicture }}"
-              alt="{{ producto.productName }}"
-              class="w-full h-48 object-cover rounded-lg mb-4"
-            />
-            <h2 class="text-xl font-semibold text-sky-700 mb-2">
-              {{ producto.productName }}
-            </h2>
-            <p class="text-sky-600 mb-2">{{ producto.productDescription }}</p>
-            <p class="text-sky-800 font-bold">
-              Precio: ${{ producto.productPrice }}
-            </p>
-            <a
-              href="{{ producto.productBuyLink }}"
-              target="_blank"
-              class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition transform hover:scale-105 mt-4"
-              >Comprar Ahora</a
-            >
-            <form
-              action="{% url 'toggle_favorito' producto.id %}"
-              method="post"
-              class="mt-2"
-            >
-              {% csrf_token %}
-              <button type="submit" class="text-sky-600 hover:text-sky-800">
-                <i
-                  class="{% if producto in user.favorite_products.all %}fas{% else %}far{% endif %} fa-heart"
-                ></i>
-                Favorito
-              </button>
-            </form>
-          </div>
-          {% endfor %}
-        </div>
-        {% else %}
-        <p class="text-center text-gray-500">No tienes productos favoritos.</p>
-        {% endif %}
+        <button type="submit" class="text-sky-600 hover:text-sky-800">
+          <i class="{% if producto in user.favorite_products.all %}fas{% else %}far{% endif %} fa-heart"></i> Favorito
+        </button>
       </form>
-    </main>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-center text-gray-500">No tienes productos favoritos.</p>
+  {% endif %}
+</form>
+{% endblock %}
 
-    <script
-      src="https://kit.fontawesome.com/tu-codigo-de-kit.js"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      const menuButton = document.getElementById("user-menu-button");
-      const dropdown = document.getElementById("user-dropdown");
-      const cards = document.querySelectorAll(".producto-card");
-      const inputA = document.getElementById("producto_a");
-      const inputB = document.getElementById("producto_b");
-      const barra = document.getElementById("barraComparar");
+{% block extra_scripts %}
+<script>
+  const menuButton = document.getElementById("user-menu-button");
+  const dropdown = document.getElementById("user-dropdown");
+  const cards = document.querySelectorAll(".producto-card");
+  const inputA = document.getElementById("producto_a");
+  const inputB = document.getElementById("producto_b");
+  const barra = document.getElementById("barraComparar");
 
-      let seleccionados = [];
+  let seleccionados = [];
 
-      cards.forEach((card) => {
-        card.addEventListener("click", () => {
-          const id = card.dataset.id;
-          if (seleccionados.includes(id)) {
-            seleccionados = seleccionados.filter((e) => e !== id);
-            card.classList.remove("selected-shadow");
-          } else {
-            if (seleccionados.length < 2) {
-              seleccionados.push(id);
-              card.classList.add("selected-shadow");
-            }
-          }
-
-          inputA.value = seleccionados[0] || "";
-          inputB.value = seleccionados[1] || "";
-
-          barra.classList.toggle("hidden", seleccionados.length !== 2);
-        });
-      });
-
-      if (menuButton) {
-        menuButton.addEventListener("click", () => {
-          dropdown.classList.toggle("hidden");
-        });
-      }
-      window.addEventListener("click", function (e) {
-        if (
-          menuButton &&
-          !menuButton.contains(e.target) &&
-          !dropdown.contains(e.target)
-        ) {
-          dropdown.classList.add("hidden");
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const id = card.dataset.id;
+      if (seleccionados.includes(id)) {
+        seleccionados = seleccionados.filter((e) => e !== id);
+        card.classList.remove("selected-shadow");
+      } else {
+        if (seleccionados.length < 2) {
+          seleccionados.push(id);
+          card.classList.add("selected-shadow");
         }
-      });
-    </script>
-  </body>
-</html>
+      }
+
+      inputA.value = seleccionados[0] || "";
+      inputB.value = seleccionados[1] || "";
+      barra.classList.toggle("hidden", seleccionados.length !== 2);
+    });
+  });
+
+  if (menuButton) {
+    menuButton.addEventListener("click", () => {
+      dropdown.classList.toggle("hidden");
+    });
+  }
+
+  window.addEventListener("click", function (e) {
+    if (menuButton && !menuButton.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.add("hidden");
+    }
+  });
+</script>
+{% endblock %}

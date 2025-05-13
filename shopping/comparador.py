@@ -24,12 +24,12 @@ Quiero que compares estos dos productos de forma profesional y visualmente atrac
 Usa emojis para representar atributos clave, usa insignias visuales como 🔥 Más Popular, ⭐ Alta Calidad, 🛍️ Mejor Oferta, etc.
 
 1. Presenta una tabla comparativa con los siguientes campos:
-   🏷️ Nombre | 💰 Precio | 📂 Categoría | 🌍 Origen | 🔗 Enlace
+    🏷️ Nombre | 💰 Precio | 📂 Categoría | 🌍 Origen | 🔗 Enlace
 
 2. Luego, haz un análisis profesional con estilo editorial visual:
-   - Incluye fortalezas y debilidades de cada producto.
-   - Describe sus usos ideales, tipo de usuario que los disfrutaría más.
-   - Usa frases elegantes y expresivas, añade reacciones del tipo "✨ Ideal para...", "🔥 Brilla en...", "💎 Destaca por...".
+    - Incluye fortalezas y debilidades de cada producto.
+    - Describe sus usos ideales, tipo de usuario que los disfrutaría más.
+    - Usa frases elegantes y expresivas, añade reacciones del tipo "✨ Ideal para...", "🔥 Brilla en...", "💎 Destaca por...".
 
 3. Finaliza con una conclusión comparativa clara y que incluya una recomendación según el perfil del comprador.
 

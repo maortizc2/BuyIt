@@ -78,97 +78,53 @@
         transform: translateY(100%);
       }
     </style>
-  </head>
+<body class="min-h-screen bg-sky-50 font-sans">
 
-  <body class="min-h-screen bg-sky-50 font-sans">
-    <header
-      class="flex flex-col md:flex-row md:items-center justify-between bg-white p-4 shadow gap-4"
+<header class="flex flex-col md:flex-row md:items-center justify-between bg-sky-900 text-white px-6 py-4 shadow-lg gap-4">
+  <!-- Logo -->
+  <div class="logo">
+    <a href="{% url 'home' %}" class="text-2xl font-extrabold text-white hover:text-sky-300 transition">
+      BuyIt 🛍️
+    </a>
+  </div>
+
+  {% if user.is_authenticated %}
+  <!-- Search bar -->
+  <form
+    action="{% url 'search_products' %}"
+    method="get"
+    class="flex items-center w-full md:w-auto space-x-2"
+  >
+    <input
+      type="text"
+      name="q"
+      placeholder="🔍 Buscar productos..."
+      class="p-2 w-full md:w-64 bg-sky-800 text-white placeholder-sky-300 border border-sky-700 rounded-l-md focus:outline-none focus:ring-2 focus:ring-sky-400"
+      required
+      value="{{ request.GET.q }}"
+    />
+    <button
+      type="submit"
+      class="p-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-500 transition"
     >
-      <div class="logo">
-        <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600"
-          >BuyIt</a
-        >
-      </div>
+      Buscar
+    </button>
+  </form>
 
-      <form
-        action="{% url 'search_products' %}"
-        method="get"
-        class="flex items-center w-full md:w-auto space-x-2"
-      >
-        <input
-          type="text"
-          name="q"
-          placeholder="Buscar productos..."
-          class="p-2 w-full border border-gray-300 rounded-l-md focus:outline-none"
-          required
-          value="{{ request.GET.q }}"
-        />
-        <button
-          type="submit"
-          class="p-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-700"
-        >
-          Buscar
-        </button>
-      </form>
+  <!-- Icon buttons -->
+  <div class="flex items-center space-x-4 ml-4 text-2xl">
+    <a href="{% url 'favoritos_view' %}" class="hover:text-pink-400 transition" title="Favoritos">❤️</a>
+    <a href="{% url 'historial_busquedas' %}" class="hover:text-yellow-300 transition" title="Historial">⏰</a>
+    <a href="{% url 'accounts:logout' %}" class="hover:text-sky-300 transition" title="Cerrar sesión">🔒</a>
+  </div>
 
-      {% if user.is_authenticated %}
-      <div class="relative inline-block text-left">
-        <button
-          id="user-menu-button"
-          class="inline-flex justify-center items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Menú
-          <svg
-            class="ml-2 h-5 w-5"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </button>
-        <div
-          id="user-dropdown"
-          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden"
-        >
-          <div class="py-1">
-            <a
-              href="{% url 'favoritos_view' %}"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >Productos Favoritos</a
-            >
-            <a
-              href="{% url 'historial_busquedas' %}"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >Historial de Búsqueda</a
-            >
-            <a
-              href="{% url 'accounts:logout' %}"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >Cerrar Sesión</a
-            >
-          </div>
-        </div>
-      </div>
-      {% endif %}
-    </header>
-
-    <main class="container mx-auto px-4 py-8 md:py-16">
-      <h1
-        class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-4 animate-fade-in"
-      >
-        BuyIt
-      </h1>
-      <p
-        class="text-lg md:text-xl text-sky-800 text-center mb-8 max-w-2xl mx-auto animate-fade-in-up"
-      >
-        BuyIt es una plataforma para comparar productos según tus gustos y
-        necesidades.
-      </p>
+  {% else %}
+  <!-- Login Icon if not authenticated -->
+  <div class="flex items-center space-x-4 ml-4 text-2xl">
+    <a href="{% url 'accounts:login' %}" class="hover:text-green-300 transition" title="Iniciar sesión">🔓</a>
+  </div>
+  {% endif %}
+</header>
 
       {% if user.is_authenticated %} {% if productos %}
       <div id="compare-form" class="grid md:grid-cols-3 gap-8 mt-12">
@@ -181,13 +137,14 @@
             value="{{ producto.id }}"
             class="hidden comparar-checkbox"
           />
-          <div class="absolute top-4 right-4 z-10">
+          <div class="absolute top-4 left-4 z-10">
             <button
               type="button"
               class="bg-sky-600 text-white px-3 py-1 text-xs rounded hover:bg-sky-700 select-button"
             >
-              Comparar
+              🆚
             </button>
+
           </div>
           <img
             src="{{ producto.productPicture }}"
@@ -205,12 +162,17 @@
             href="{{ producto.productBuyLink }}"
             target="_blank"
             class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-1.5 px-4 rounded-full text-sm transition duration-300 ease-in-out transform hover:scale-105 mt-4"
-            >🛒 Comprar</a
-          >
+            >🛒 Comprar
+          </a>
+          <a 
+            href="{% url 'detalle_producto' producto.id %}" 
+            class= "block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-1.5 px-4 rounded-full text-sm transition duration-300 ease-in-out transform hover:scale-105 mt-4"
+            >🗒️ Detalles
+          </a>
           <form
             action="{% url 'toggle_favorito' producto.id %}"
             method="post"
-            class="absolute bottom-4 right-4"
+            class="absolute top-4 right-4"
           >
             {% csrf_token %}
             <button
@@ -252,25 +214,33 @@
         <input type="hidden" name="producto_a" id="producto_a_input" />
         <input type="hidden" name="producto_b" id="producto_b_input" />
       </form>
-      {% else %}
-      <div class="text-center">
-        <h2 class="text-3xl font-bold text-sky-700 mb-4">Acceso Restringido</h2>
-        <p class="text-sky-600 mb-4">
+  {% else %}
+    <div class="flex items-center justify-center min-h-[70vh] bg-blue-50">
+      <div class="text-center px-6 py-8 bg-white rounded-3xl shadow-xl border border-blue-100 max-w-xl w-full">
+        <h2 class="text-4xl font-extrabold text-sky-700 mb-4 flex justify-center items-center gap-2">
+          🚫 Acceso Restringido
+        </h2>
+        <p class="text-lg text-sky-600 mb-6">
           Debes registrarte o iniciar sesión para ver los productos.
         </p>
+        <div class="flex justify-center items-center gap-4 flex-wrap">
         <a
           href="{% url 'accounts:register' %}"
-          class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition"
-          >Registrarse</a
+          class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-6 rounded-full shadow-md transition"
         >
-        <span class="mx-2">o</span>
+          ✍️ Registrarse
+        </a>
+        <span class="text-gray-500 font-semibold">o</span>
         <a
           href="{% url 'accounts:login' %}"
-          class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition"
-          >Iniciar Sesión</a
+          class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-6 rounded-full shadow-md transition"
         >
+          🔐 Iniciar Sesión
+        </a>
+        </div>
       </div>
-      {% endif %}
+    </div>
+  {% endif %}
     </main>
 
     <script>

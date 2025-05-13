@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+#clase producto , almacena todos los atributos de producto
 class Product(models.Model):
     productName = models.CharField(max_length=200)
     productDescription = models.TextField()
@@ -26,7 +27,8 @@ class Product(models.Model):
 
     def __str__(self):
         return self.productName
-    
+
+# clase de busqueda , almacena todos los datos necesarios para filtrar los articulos  
 class SearchHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='search_history')
     query = models.CharField(max_length=255)
@@ -34,4 +36,15 @@ class SearchHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.query}"
+
+# clase de reviews , almacena todos los datos necesarios para almacenar los comentarios
+class Review(models.Model):
+    producto = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reseñas')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    texto = models.TextField()
+    calificacion = models.IntegerField()  # de 1 a 5
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.producto.productName} ({self.calificacion}/5)"
 

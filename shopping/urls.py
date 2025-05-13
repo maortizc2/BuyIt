@@ -9,4 +9,5 @@ urlpatterns = [
     path('products/', views.productos_externos, name='productos_externos'),
     path('comparar/', views.comparar_productos, name='comparar_productos'),  
     path('historial/', views.historial_busquedas, name='historial_busquedas'),
+    path('producto/<int:producto_id>/', views.detalle_producto, name='detalle_producto'),
 ]
