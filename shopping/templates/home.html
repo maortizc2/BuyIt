@@ -79,13 +79,38 @@
       }
     </style>
   </head>
+
   <body class="min-h-screen bg-sky-50 font-sans">
-    <header class="flex items-center justify-between bg-white p-4 shadow">
+    <header
+      class="flex flex-col md:flex-row md:items-center justify-between bg-white p-4 shadow gap-4"
+    >
       <div class="logo">
         <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600"
           >BuyIt</a
         >
       </div>
+
+      <form
+        action="{% url 'search_products' %}"
+        method="get"
+        class="flex items-center w-full md:w-auto space-x-2"
+      >
+        <input
+          type="text"
+          name="q"
+          placeholder="Buscar productos..."
+          class="p-2 w-full border border-gray-300 rounded-l-md focus:outline-none"
+          required
+          value="{{ request.GET.q }}"
+        />
+        <button
+          type="submit"
+          class="p-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-700"
+        >
+          Buscar
+        </button>
+      </form>
+
       {% if user.is_authenticated %}
       <div class="relative inline-block text-left">
         <button
@@ -117,6 +142,11 @@
               >Productos Favoritos</a
             >
             <a
+              href="{% url 'historial_busquedas' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >Historial de Búsqueda</a
+            >
+            <a
               href="{% url 'accounts:logout' %}"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >Cerrar Sesión</a
@@ -140,9 +170,9 @@
         necesidades.
       </p>
 
-      {% if user.is_authenticated %}
-      <form id="compare-form" class="grid md:grid-cols-3 gap-8 mt-12">
-        {% csrf_token %} {% for producto in productos %}
+      {% if user.is_authenticated %} {% if productos %}
+      <div id="compare-form" class="grid md:grid-cols-3 gap-8 mt-12">
+        {% for producto in productos %}
         <div
           class="relative bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 group"
         >
@@ -174,18 +204,32 @@
           <a
             href="{{ producto.productBuyLink }}"
             target="_blank"
-            class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mt-4"
-            >Comprar Ahora</a
+            class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-1.5 px-4 rounded-full text-sm transition duration-300 ease-in-out transform hover:scale-105 mt-4"
+            >🛒 Comprar</a
           >
+          <form
+            action="{% url 'toggle_favorito' producto.id %}"
+            method="post"
+            class="absolute bottom-4 right-4"
+          >
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="text-red-500 hover:text-red-600 text-xl"
+            >
+              {% if producto in user.favorite_products.all %} ❤️ {% else %} 🤍
+              {% endif %}
+            </button>
+          </form>
         </div>
-        {% empty %}
-        <p class="text-center text-gray-500 col-span-3">
-          No hay productos disponibles.
-        </p>
         {% endfor %}
-      </form>
+      </div>
+      {% else %}
+      <p class="text-center text-gray-500 mt-12">
+        No hay productos disponibles.
+      </p>
+      {% endif %}
 
-      <!-- Nueva barra de comparación -->
       <div id="compare-bar" class="compare-bar hidden">
         <span class="font-semibold text-white"
           >Comparar 2 productos seleccionados</span
@@ -198,7 +242,6 @@
         </button>
       </div>
 
-      <!-- Formulario oculto para enviar IDs -->
       <form
         id="real-compare-form"
         method="post"
@@ -209,7 +252,6 @@
         <input type="hidden" name="producto_a" id="producto_a_input" />
         <input type="hidden" name="producto_b" id="producto_b_input" />
       </form>
-
       {% else %}
       <div class="text-center">
         <h2 class="text-3xl font-bold text-sky-700 mb-4">Acceso Restringido</h2>
@@ -232,12 +274,22 @@
     </main>
 
     <script>
+      const menuButton = document.getElementById("user-menu-button");
+      const dropdown = document.getElementById("user-dropdown");
+      if (menuButton) {
+        menuButton.addEventListener("click", () =>
+          dropdown.classList.toggle("hidden")
+        );
+        window.addEventListener("click", (e) => {
+          if (!menuButton.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.add("hidden");
+          }
+        });
+      }
+
       const checkboxes = document.querySelectorAll(".comparar-checkbox");
       const compareBar = document.getElementById("compare-bar");
       const selectButtons = document.querySelectorAll(".select-button");
-      const selectedStorage = JSON.parse(
-        localStorage.getItem("selectedProducts") || "[]"
-      );
 
       function updateCompareState() {
         const selected = Array.from(checkboxes).filter((cb) => cb.checked);
@@ -252,17 +304,9 @@
             .closest("div")
             .classList.add("ring", "ring-4", "ring-sky-500", "scale-105")
         );
-        if (selected.length === 2) {
-          checkboxes.forEach((cb) => {
-            if (!cb.checked) cb.disabled = true;
-          });
-        } else {
-          checkboxes.forEach((cb) => (cb.disabled = false));
-        }
-        localStorage.setItem(
-          "selectedProducts",
-          JSON.stringify(selected.map((cb) => cb.value))
-        );
+        checkboxes.forEach((cb) => {
+          cb.disabled = selected.length === 2 && !cb.checked;
+        });
       }
 
       function enviarComparacion() {
@@ -287,21 +331,10 @@
       });
 
       checkboxes.forEach((cb) => {
-        if (selectedStorage.includes(cb.value)) cb.checked = true;
+        cb.addEventListener("change", updateCompareState);
       });
-      updateCompareState();
 
-      const menuButton = document.getElementById("user-menu-button");
-      const dropdown = document.getElementById("user-dropdown");
-      if (menuButton) {
-        menuButton.addEventListener("click", () => {
-          dropdown.classList.toggle("hidden");
-        });
-        window.addEventListener("click", (e) => {
-          if (!menuButton.contains(e.target) && !dropdown.contains(e.target))
-            dropdown.classList.add("hidden");
-        });
-      }
+      updateCompareState();
     </script>
   </body>
 </html>

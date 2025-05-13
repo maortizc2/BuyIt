@@ -1,73 +1,114 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resultados de Búsqueda - BuyIt</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resultados de Búsqueda - BuyIt</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-    }
-    .animate-fade-in {
-      animation: fadeIn 1s ease-out;
-    }
-    .animate-fade-in-up {
-      animation: fadeInUp 1s ease-out;
-    }
-  </style>
-</head>
-<body class="min-h-screen bg-sky-50 font-sans">
-  <!-- Header similar al de home -->
-  <header class="flex items-center justify-between bg-white p-4 shadow">
-    <!-- Logo -->
-    <div class="logo">
-      <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600">BuyIt</a>
-    </div>
-    <!-- Barra de búsqueda -->
-    <form action="{% url 'search_products' %}" method="get" class="flex items-center space-x-2">
-      <input type="text" name="q" placeholder="Buscar productos..." required class="p-2 border border-gray-300 rounded-l-md focus:outline-none" value="{{ query }}">
-      <button type="submit" class="p-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-700">
-        Buscar
-      </button>
-    </form>
-  </header>
+      .animate-fade-in {
+        animation: fadeIn 1s ease-out;
+      }
+      .animate-fade-in-up {
+        animation: fadeInUp 1s ease-out;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-sky-50 font-sans">
+    <!-- Header similar al de home -->
+    <header class="flex items-center justify-between bg-white p-4 shadow">
+      <!-- Logo -->
+      <div class="logo">
+        <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600"
+          >BuyIt</a
+        >
+      </div>
+      <!-- Barra de búsqueda -->
+      <form
+        action="{% url 'search_products' %}"
+        method="get"
+        class="flex items-center space-x-2"
+      >
+        <input
+          type="text"
+          name="q"
+          placeholder="Buscar productos..."
+          required
+          class="p-2 border border-gray-300 rounded-l-md focus:outline-none"
+          value="{{ query }}"
+        />
+        <button
+          type="submit"
+          class="p-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-700"
+        >
+          Buscar
+        </button>
+      </form>
+    </header>
 
-  <!-- Contenido principal -->
-  <main class="container mx-auto px-4 py-8 md:py-16">
-    <h1 class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-4 animate-fade-in">
-      Resultados de Búsqueda
-    </h1>
-    {% if results %}
+    <!-- Contenido principal -->
+    <main class="container mx-auto px-4 py-8 md:py-16">
+      <h1
+        class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-4 animate-fade-in"
+      >
+        Resultados de Búsqueda
+      </h1>
+      {% if results %}
       <div class="mt-12 grid md:grid-cols-3 gap-8">
         {% for producto in results %}
-          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-            <img src="{{ producto.productPicture }}" alt="{{ producto.productName }}" class="w-full h-48 object-cover rounded-lg mb-4">
-            <h2 class="text-xl font-semibold text-sky-700 mb-2">{{ producto.productName }}</h2>
-            <p class="text-sky-600 mb-2">{{ producto.productDescription }}</p>
-            <p class="text-sky-800 font-bold">Precio: ${{ producto.productPrice }}</p>
-            <a href="{{ producto.productBuyLink }}" target="_blank" class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mt-4">
-              Comprar Ahora
-            </a>
-          </div>
+        <div
+          class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1"
+        >
+          <img
+            src="{{ producto.productPicture }}"
+            alt="{{ producto.productName }}"
+            class="w-full h-48 object-cover rounded-lg mb-4"
+          />
+          <h2 class="text-xl font-semibold text-sky-700 mb-2">
+            {{ producto.productName }}
+          </h2>
+          <p class="text-sky-600 mb-2">{{ producto.productDescription }}</p>
+          <p class="text-sky-800 font-bold">
+            Precio: ${{ producto.productPrice }}
+          </p>
+          <a
+            href="{{ producto.productBuyLink }}"
+            target="_blank"
+            class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mt-4"
+          >
+            Comprar Ahora
+          </a>
+        </div>
         {% endfor %}
       </div>
-    {% else %}
-      <p class="text-center text-gray-500">No se encontraron productos para "{{ query }}".</p>
-    {% endif %}
-  </main>
-</body>
+      {% else %}
+      <p class="text-center text-gray-500">
+        No se encontraron productos para "{{ query }}".
+      </p>
+      {% endif %}
+    </main>
+  </body>
 </html>

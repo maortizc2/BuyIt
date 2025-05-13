@@ -1,0 +1,11 @@
+{% extends "home.html" %}
+{% block content %}
+  <h1>Historial</h1>
+  <ul>
+    {% for item in historial %}
+      <li>{{ item.query }} ({{ item.timestamp|date:"Y-m-d H:i" }})</li>
+    {% empty %}
+      <li>No tienes búsquedas aún.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

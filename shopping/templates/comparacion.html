@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} {% load markdown_extras %}
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -47,10 +47,38 @@
       .fade-in {
         animation: fadeIn 0.8s ease-out;
       }
+      .markdown h1,
+      .markdown h2,
+      .markdown h3 {
+        font-weight: bold;
+        color: #0369a1;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+      }
+      .markdown ul {
+        list-style-type: disc;
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .markdown p {
+        margin-bottom: 1rem;
+      }
+      .markdown code {
+        background: #f1f5f9;
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-size: 0.95rem;
+      }
+      .markdown pre {
+        background: #f1f5f9;
+        padding: 1rem;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin-top: 1rem;
+      }
     </style>
   </head>
   <body class="bg-sky-50 min-h-screen font-sans text-gray-800">
-    <!-- Header adaptado al diseño base -->
     <header class="flex items-center justify-between bg-white p-4 shadow">
       <div class="logo">
         <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600"
@@ -61,7 +89,7 @@
       <div class="relative inline-block text-left">
         <button
           id="user-menu-button"
-          class="inline-flex justify-center items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+          class="inline-flex justify-center items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Menú
           <svg
@@ -107,7 +135,7 @@
 
       <div
         id="comparador"
-        class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in transition-all duration-500"
+        class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in"
       >
         <!-- Producto A -->
         <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
@@ -173,12 +201,11 @@
         <h2 class="text-2xl font-bold text-sky-700 mb-4">
           📊 Análisis Profesional con IA
         </h2>
-        <pre
-          class="whitespace-pre-wrap bg-gray-50 text-gray-700 p-6 rounded-md text-sm leading-relaxed border border-sky-100"
+        <div
+          class="markdown text-gray-700 text-sm leading-relaxed border border-sky-100 p-6 rounded-md"
         >
-{{ analisis_ai }}
-            </pre
-        >
+          {{ analisis_ai|markdownify|safe }}
+        </div>
         <div class="text-center mt-6">
           <a
             href="{% url 'home' %}"
@@ -199,11 +226,7 @@
         });
       }
       window.addEventListener("click", function (e) {
-        if (
-          menuButton &&
-          !menuButton.contains(e.target) &&
-          !dropdown.contains(e.target)
-        ) {
+        if (!menuButton.contains(e.target) && !dropdown.contains(e.target)) {
           dropdown.classList.add("hidden");
         }
       });
