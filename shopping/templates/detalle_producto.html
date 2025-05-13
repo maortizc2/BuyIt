@@ -3,11 +3,11 @@
 <div class="container py-4">
     <div class="row">
         <!-- Imagen y detalles principales -->
-        <div class="col-md-5">
-            <img src="{{ producto.productPicture }}" class="img-fluid rounded" alt="{{ producto.productName }}">
+        <div class="col-md-4"> <!-- Cambiado de col-md-5 a col-md-4 para hacer más pequeña la imagen -->
+            <img src="{{ producto.productPicture }}" class="img-fluid rounded" alt="{{ producto.productName }}" style="max-width: 300px;"> <!-- Añadido estilo para limitar el tamaño -->
         </div>
-        <div class="col-md-7">
-            <h2>{{ producto.productName }}</h2>
+        <div class="col-md-8"> <!-- Ajustado para compensar el cambio anterior -->
+            <h2><strong>{{ producto.productName }}</strong></h2>
             <div class="mb-3">
                 <!-- Mostrar estrellas dinámicamente -->
                 <div class="rating-stars">
@@ -24,19 +24,21 @@
                 </div>
             </div>
             <h3 class="text-primary">${{ producto.productPrice }}</h3>
-            <p><strong>Marca:</strong> {{ producto.productBrand }}</p>
-            <p><strong>Categoría:</strong> {{ producto.productCategory }}</p>
-            <p><strong>Descripción:</strong> {{ producto.productDescription }}</p>
+            <p><strong>Marca:</strong> {{ producto.productBrand }}</p> <!-- Añadido negrita -->
+            <p><strong>Categoría:</strong> {{ producto.productCategory }}</p> <!-- Añadido negrita -->
+            <p><strong>Descripción:</strong>{{ producto.productDescription }}</p> <!-- Añadido negrita -->
+        <div class="d-grid gap-2">
+            <!-- Botón Comprar ahora -->
             <a href="{{ producto.productBuyLink }}" target="_blank" class="btn btn-primary">Comprar ahora</a>
-            
+            <!-- Botón Favoritos -->
             {% if user.is_authenticated %}
                 {% if producto in user.favorite_products.all %}
                     <a href="{% url 'toggle_favorito' producto.id %}" class="btn btn-outline-danger">
-                        <i class="fas fa-heart"></i> Quitar de favoritos
+                        <i class="far fa-heart"></i> Añadir a favoritos
                     </a>
                 {% else %}
                     <a href="{% url 'toggle_favorito' producto.id %}" class="btn btn-outline-danger">
-                        <i class="far fa-heart"></i> Añadir a favoritos
+                        <i class="fas fa-heart"></i> Quitar de favoritos
                     </a>
                 {% endif %}
             {% endif %}
@@ -46,57 +48,66 @@
     <!-- Sección de reseñas -->
     <div class="row mt-5">
         <div class="col-md-12">
-            <h3>Reseñas y calificaciones</h3>
+            <h3><strong>Reseñas y calificaciones</strong></h3>
             <hr>
         </div>
     </div>
     
-    <!-- Formulario para escribir reseñas -->
-    {% if user.is_authenticated %}
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h4>Escribe una reseña</h4>
-                    <form method="POST">
-                        {% csrf_token %}
-                        
-                        <!-- Sistema de calificación por estrellas interactivo -->
-                        <div class="mb-3">
-                            <label for="calificacion" class="form-label">Tu calificación:</label>
-                            <div class="star-rating">
-                                {% for i in "12345"|make_list %}
-                                <input type="radio" id="star{{ i }}" name="calificacion" value="{{ i }}" required>
-                                <label for="star{{ i }}" class="star-label">
-                                    <i class="far fa-star"></i>
-                                </label>
-                                {% endfor %}
-                            </div>
+    <!-- Sección de reseñas -->
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h3><strong>Reseñas y calificaciones</strong></h3>
+        <hr>
+    </div>
+</div>
+
+<!-- Formulario para escribir reseñas -->
+{% if user.is_authenticated %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body"> <!-- Quitado text-center -->
+                <h4>Escribe una reseña</h4>
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <!-- Sistema de calificación por estrellas interactivo -->
+                    <div class="mb-3">
+                        <label for="calificacion" class="form-label">Tu calificación:</label>
+                        <div class="star-rating"> <!-- Quitado d-flex justify-content-center -->
+                            {% for i in "12345"|make_list %}
+                            <input type="radio" id="star{{ i }}" name="calificacion" value="{{ i }}" required>
+                            <label for="star{{ i }}" class="star-label">
+                                <i class="far fa-star"></i>
+                            </label>
+                            {% endfor %}
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="texto" class="form-label">Tu opinión:</label>
-                            <textarea name="texto" id="texto" class="form-control" rows="4" placeholder="Comparte tu experiencia con este producto..." required></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Publicar reseña</button>
-                    </form>
-                </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="texto" class="form-label">Tu opinión:</label>
+                        <textarea name="texto" id="texto" class="form-control mx-auto d-block" style="max-width: 100%;" rows="4" placeholder="Comparte tu experiencia con este producto..." required></textarea>
+                        <!-- Cambiado a mx-auto d-block para centrar solo el textarea -->
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Publicar reseña</button>
+                </form>
             </div>
         </div>
     </div>
-    {% else %}
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="alert alert-info">
-                <p class="mb-0"><a href="{% url 'login' %}">Inicia sesión</a> para dejar una reseña.</p>
-            </div>
+</div>
+{% else %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="alert alert-info"> <!-- Quitado text-center -->
+            <p class="mb-0"><a href="{% url 'login' %}">Inicia sesión</a> para dejar una reseña.</p>
         </div>
     </div>
-    {% endif %}
+</div>
+{% endif %}
     
     <!-- Lista de reseñas -->
-    <div class="row">
+    <div class="row justify-content-center"> <!-- Añadido justify-content-center -->
         <div class="col-md-8">
             {% for r in reseñas %}
             <div class="card mb-3">
@@ -118,7 +129,7 @@
                 </div>
             </div>
             {% empty %}
-            <div class="alert alert-light">
+            <div class="alert alert-light text-center"> <!-- Añadido text-center -->
                 <p>No hay reseñas todavía. ¡Sé el primero en opinar sobre este producto!</p>
             </div>
             {% endfor %}
