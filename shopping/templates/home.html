@@ -1,307 +1,177 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BuyIt - Compare and buy smart with the best experience</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              sky: {
-                50: "#f0f9ff",
-                100: "#e0f2fe",
-                200: "#bae6fd",
-                300: "#7dd3fc",
-                400: "#38bdf8",
-                500: "#0ea5e9",
-                600: "#0284c7",
-                700: "#0369a1",
-                800: "#075985",
-                900: "#0c4a6e",
-              },
-            },
-            fontFamily: {
-              sans: ["Poppins", "sans-serif"],
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuyIt - Compare and buy smart with the best experience</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sky: {
+              50: "#f0f9ff",
+              100: "#e0f2fe",
+              200: "#bae6fd",
+              300: "#7dd3fc",
+              400: "#38bdf8",
+              500: "#0ea5e9",
+              600: "#0284c7",
+              700: "#0369a1",
+              800: "#075985",
+              900: "#0c4a6e",
             },
           },
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+          },
         },
-      };
-    </script>
-    <style>
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .animate-fade-in {
-        animation: fadeIn 1s ease-out;
-      }
-      .animate-fade-in-up {
-        animation: fadeInUp 1s ease-out;
-      }
-      .compare-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: #0284c7;
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
-        z-index: 50;
-        transition: transform 0.4s ease-in-out;
-      }
-      .compare-bar.hidden {
-        transform: translateY(100%);
-      }
-    </style>
-  </head>
-  <body class="min-h-screen bg-sky-50 font-sans">
-    <header class="flex items-center justify-between bg-white p-4 shadow">
-      <div class="logo">
-        <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600"
-          >BuyIt</a
-        >
-      </div>
-      {% if user.is_authenticated %}
-      <div class="relative inline-block text-left">
-        <button
-          id="user-menu-button"
-          class="inline-flex justify-center items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Menú
-          <svg
-            class="ml-2 h-5 w-5"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </button>
-        <div
-          id="user-dropdown"
-          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden"
-        >
-          <div class="py-1">
-            <a
-              href="{% url 'favoritos_view' %}"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >Productos Favoritos</a
-            >
-            <a
-              href="{% url 'accounts:logout' %}"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >Cerrar Sesión</a
-            >
-          </div>
+      },
+    };
+  </script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeIn 1s ease-out; }
+    .animate-fade-in-up { animation: fadeInUp 1s ease-out; }
+    .compare-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #0284c7;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      z-index: 50;
+      transition: transform 0.4s ease-in-out;
+    }
+    .compare-bar.hidden {
+      transform: translateY(100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-sky-50 font-sans">
+
+  <header class="flex flex-col md:flex-row md:items-center justify-between bg-white p-4 shadow gap-4">
+    <div class="logo">
+      <a href="{% url 'home' %}" class="text-2xl font-bold text-sky-600">BuyIt</a>
+    </div>
+
+    <form action="{% url 'search_products' %}" method="get" class="flex items-center w-full md:w-auto space-x-2">
+      <input
+        type="text"
+        name="q"
+        placeholder="Buscar productos..."
+        class="p-2 w-full border border-gray-300 rounded-l-md focus:outline-none"
+        required
+        value="{{ request.GET.q }}"
+      />
+      <button type="submit" class="p-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-700">Buscar</button>
+    </form>
+
+    {% if user.is_authenticated %}
+    <div class="relative inline-block text-left">
+      <button id="user-menu-button" class="inline-flex justify-center items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+        Menú
+        <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div id="user-dropdown" class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden">
+        <div class="py-1">
+          <a href="{% url 'favoritos_view' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Productos Favoritos</a>
+          <a href="{% url 'historial_busquedas' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Historial de Búsqueda</a>
+          <a href="{% url 'accounts:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar Sesión</a>
         </div>
       </div>
-      {% endif %}
-    </header>
+    </div>
+    {% endif %}
+  </header>
 
-    <main class="container mx-auto px-4 py-8 md:py-16">
-      <h1
-        class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-4 animate-fade-in"
-      >
-        BuyIt
-      </h1>
-      <p
-        class="text-lg md:text-xl text-sky-800 text-center mb-8 max-w-2xl mx-auto animate-fade-in-up"
-      >
-        BuyIt es una plataforma para comparar productos según tus gustos y
-        necesidades.
-      </p>
+  <main class="container mx-auto px-4 py-8 md:py-16">
+    <h1 class="text-4xl md:text-6xl font-bold text-sky-600 text-center mb-4 animate-fade-in">BuyIt</h1>
+    <p class="text-lg md:text-xl text-sky-800 text-center mb-8 max-w-2xl mx-auto animate-fade-in-up">
+      BuyIt es una plataforma para comparar productos según tus gustos y necesidades.
+    </p>
 
-      {% if user.is_authenticated %}
-      <form id="compare-form" class="grid md:grid-cols-3 gap-8 mt-12">
-        {% csrf_token %} {% for producto in productos %}
-        <div
-          class="relative bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 group"
-        >
-          <input
-            type="checkbox"
-            value="{{ producto.id }}"
-            class="hidden comparar-checkbox"
-          />
-          <div class="absolute top-4 right-4 z-10">
-            <button
-              type="button"
-              class="bg-sky-600 text-white px-3 py-1 text-xs rounded hover:bg-sky-700 select-button"
-            >
-              Comparar
-            </button>
-          </div>
-          <img
-            src="{{ producto.productPicture }}"
-            alt="{{ producto.productName }}"
-            class="w-full h-48 object-cover rounded-lg mb-4"
-          />
-          <h2 class="text-xl font-semibold text-sky-700 mb-2">
-            {{ producto.productName }}
-          </h2>
-          <p class="text-sky-600 mb-2">{{ producto.productDescription }}</p>
-          <p class="text-sky-800 font-bold">
-            Precio: ${{ producto.productPrice }}
-          </p>
-          <a
-            href="{{ producto.productBuyLink }}"
-            target="_blank"
-            class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 mt-4"
-            >Comprar Ahora</a
-          >
+    {% if user.is_authenticated %}
+    <div id="compare-form" class="grid md:grid-cols-3 gap-8 mt-12">
+      {% for producto in productos %}
+      <div class="relative bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 group">
+        <input type="checkbox" value="{{ producto.id }}" class="hidden comparar-checkbox" />
+
+        <div class="absolute top-4 right-4 z-10">
+          <button type="button" class="bg-sky-600 text-white px-3 py-1 text-xs rounded hover:bg-sky-700 select-button">Comparar</button>
         </div>
-        {% empty %}
-        <p class="text-center text-gray-500 col-span-3">
-          No hay productos disponibles.
-        </p>
-        {% endfor %}
-      </form>
 
-      <!-- Nueva barra de comparación -->
-      <div id="compare-bar" class="compare-bar hidden">
-        <span class="font-semibold text-white"
-          >Comparar 2 productos seleccionados</span
-        >
-        <button
-          onclick="enviarComparacion()"
-          class="bg-white text-sky-600 font-bold px-6 py-2 rounded hover:bg-sky-100 transition"
-        >
-          Comparar
-        </button>
+        <img src="{{ producto.productPicture }}" alt="{{ producto.productName }}" class="w-full h-48 object-cover rounded-lg mb-4" />
+
+        <h2 class="text-xl font-semibold text-sky-700 mb-2">{{ producto.productName }}</h2>
+        <p class="text-sky-600 mb-2">{{ producto.productDescription }}</p>
+        <p class="text-sky-800 font-bold">Precio: ${{ producto.productPrice }}</p>
+
+        <a href="{{ producto.productBuyLink }}" target="_blank" class="block text-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-1.5 px-4 rounded-full text-sm transition duration-300 ease-in-out transform hover:scale-105 mt-4">🛒 Comprar</a>
+
+        <form action="{% url 'toggle_favorito' producto.id %}" method="post" class="absolute bottom-4 right-4">
+          {% csrf_token %}
+          <button type="submit" class="text-red-500 hover:text-red-600 text-xl">
+            {% if producto in user.favorite_products.all %}❤️{% else %}🤍{% endif %}
+          </button>
+        </form>
       </div>
+      {% empty %}
+      <p class="text-center text-gray-500 col-span-3">No hay productos disponibles.</p>
+      {% endfor %}
+    </div>
 
-      <!-- Formulario oculto para enviar IDs -->
-      <form
-        id="real-compare-form"
-        method="post"
-        action="{% url 'comparar_productos' %}"
-        class="hidden"
-      >
-        {% csrf_token %}
-        <input type="hidden" name="producto_a" id="producto_a_input" />
-        <input type="hidden" name="producto_b" id="producto_b_input" />
-      </form>
+    <div id="compare-bar" class="compare-bar hidden">
+      <span class="font-semibold text-white">Comparar 2 productos seleccionados</span>
+      <button onclick="enviarComparacion()" class="bg-white text-sky-600 font-bold px-6 py-2 rounded hover:bg-sky-100 transition">Comparar</button>
+    </div>
 
-      {% else %}
-      <div class="text-center">
-        <h2 class="text-3xl font-bold text-sky-700 mb-4">Acceso Restringido</h2>
-        <p class="text-sky-600 mb-4">
-          Debes registrarte o iniciar sesión para ver los productos.
-        </p>
-        <a
-          href="{% url 'accounts:register' %}"
-          class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition"
-          >Registrarse</a
-        >
-        <span class="mx-2">o</span>
-        <a
-          href="{% url 'accounts:login' %}"
-          class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition"
-          >Iniciar Sesión</a
-        >
-      </div>
-      {% endif %}
-    </main>
+    <form id="real-compare-form" method="post" action="{% url 'comparar_productos' %}" class="hidden">
+      {% csrf_token %}
+      <input type="hidden" name="producto_a" id="producto_a_input" />
+      <input type="hidden" name="producto_b" id="producto_b_input" />
+    </form>
+    {% else %}
+    <div class="text-center">
+      <h2 class="text-3xl font-bold text-sky-700 mb-4">Acceso Restringido</h2>
+      <p class="text-sky-600 mb-4">Debes registrarte o iniciar sesión para ver los productos.</p>
+      <a href="{% url 'accounts:register' %}" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition">Registrarse</a>
+      <span class="mx-2">o</span>
+      <a href="{% url 'accounts:login' %}" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full transition">Iniciar Sesión</a>
+    </div>
+    {% endif %}
+  </main>
 
-    <script>
-      const checkboxes = document.querySelectorAll(".comparar-checkbox");
-      const compareBar = document.getElementById("compare-bar");
-      const selectButtons = document.querySelectorAll(".select-button");
-      const selectedStorage = JSON.parse(
-        localStorage.getItem("selectedProducts") || "[]"
-      );
+  <script>
+    const menuButton = document.getElementById("user-menu-button");
+    const dropdown = document.getElementById("user-dropdown");
 
-      function updateCompareState() {
-        const selected = Array.from(checkboxes).filter((cb) => cb.checked);
-        compareBar.classList.toggle("hidden", selected.length !== 2);
-        checkboxes.forEach((cb) =>
-          cb
-            .closest("div")
-            .classList.remove("ring", "ring-4", "ring-sky-500", "scale-105")
-        );
-        selected.forEach((cb) =>
-          cb
-            .closest("div")
-            .classList.add("ring", "ring-4", "ring-sky-500", "scale-105")
-        );
-        if (selected.length === 2) {
-          checkboxes.forEach((cb) => {
-            if (!cb.checked) cb.disabled = true;
-          });
-        } else {
-          checkboxes.forEach((cb) => (cb.disabled = false));
-        }
-        localStorage.setItem(
-          "selectedProducts",
-          JSON.stringify(selected.map((cb) => cb.value))
-        );
-      }
-
-      function enviarComparacion() {
-        const seleccionados = Array.from(checkboxes).filter((cb) => cb.checked);
-        if (seleccionados.length === 2) {
-          document.getElementById("producto_a_input").value =
-            seleccionados[0].value;
-          document.getElementById("producto_b_input").value =
-            seleccionados[1].value;
-          document.getElementById("real-compare-form").submit();
-        } else {
-          alert("Selecciona exactamente 2 productos para comparar.");
-        }
-      }
-
-      selectButtons.forEach((btn, i) => {
-        btn.addEventListener("click", () => {
-          const cb = checkboxes[i];
-          cb.checked = !cb.checked;
-          updateCompareState();
-        });
+    if (menuButton) {
+      menuButton.addEventListener("click", () => {
+        dropdown.classList.toggle("hidden");
       });
 
-      checkboxes.forEach((cb) => {
-        if (selectedStorage.includes(cb.value)) cb.checked = true;
+      window.addEventListener("click", function (e) {
+        if (!menuButton.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.add("hidden");
+        }
       });
-      updateCompareState();
-
-      const menuButton = document.getElementById("user-menu-button");
-      const dropdown = document.getElementById("user-dropdown");
-      if (menuButton) {
-        menuButton.addEventListener("click", () => {
-          dropdown.classList.toggle("hidden");
-        });
-        window.addEventListener("click", (e) => {
-          if (!menuButton.contains(e.target) && !dropdown.contains(e.target))
-            dropdown.classList.add("hidden");
-        });
-      }
-    </script>
-  </body>
+    }
+  </script>
+</body>
 </html>
