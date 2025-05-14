@@ -1,3 +1,4 @@
+import requests,openai,os,re,time
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -8,28 +9,17 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from shopping.models import Product
 from dotenv import load_dotenv
-import openai,time,os,re,requests,random,uuid
+
+
+# Valores predeterminados para campos faltantes
+DEFAULT_IMAGE = "https://via.placeholder.com/150"
+DEFAULT_LINK = "https://example.com/product"
+DEFAULT_NOMBRE = "Producto"
+DEFAULT_PRECIO = "99.900"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36"
 }
-
-# Funciones para generar valores dinámicos
-def generate_default_image():
-    return f"https://via.placeholder.com/200x200.png?text=Producto+{uuid.uuid4().hex[:100]}"
-
-def generate_default_link():
-    links = ["https://www.americanino.com/","https://www.mercedescampuzano.com/","https://www.arturocalle.com","https://www.ae.com.co/", "https://www.tennis.com.co/" ]
-    return random.choice(links)
-
-def generate_default_nombre():
-    nombres_genericos = ["Camisa", "Buso", "Chaqueta", "Pantalon", "Jean"]
-    colores = ["color blanco", "color negro", "color rojo", "Tela suave", " de cuero", "con estampado"]
-    return f"{random.choice(nombres_genericos)} {random.choice(colores)}"
-
-def generate_default_precio():
-    return f"{random.randint(50000, 500000):,.0f}".replace(",", ".")
-
 
 # 🔹 Utilidad Selenium mejorada para páginas dinámicas
 def get_dynamic_html(url, wait_time=10):
@@ -66,26 +56,28 @@ def get_dynamic_html(url, wait_time=10):
 
 # Función para validar productos antes de agregarlos
 def validar_producto(producto, origen):
+    # Verificar campos requeridos y asignar valores predeterminados si faltan
     if 'nombre' not in producto or not producto['nombre']:
-        producto['nombre'] = generate_default_nombre()
-        print(f"⚠️ Producto de {origen} sin nombre, asignando valor: {producto['nombre']}")
-
+        print(f"⚠️ Producto de {origen} sin nombre, asignando valor predeterminado")
+        producto['nombre'] = DEFAULT_NOMBRE
+        
     if 'precio' not in producto or not producto['precio']:
-        producto['precio'] = generate_default_precio()
-        print(f"⚠️ Producto '{producto['nombre']}' de {origen} sin precio, asignando valor: {producto['precio']}")
-
+        print(f"⚠️ Producto '{producto.get('nombre', 'sin nombre')}' de {origen} sin precio, asignando valor predeterminado")
+        producto['precio'] = DEFAULT_PRECIO
+        
     if 'link' not in producto or not producto['link']:
-        producto['link'] = generate_default_link()
-        print(f"⚠️ Producto '{producto['nombre']}' de {origen} sin link, asignando valor: {producto['link']}")
-
+        print(f"⚠️ Producto '{producto.get('nombre', 'sin nombre')}' de {origen} sin link, asignando valor predeterminado")
+        producto['link'] = DEFAULT_LINK
+        
     if 'imagen' not in producto or not producto['imagen']:
-        producto['imagen'] = generate_default_image()
-        print(f"⚠️ Producto '{producto['nombre']}' de {origen} sin imagen, asignando valor: {producto['imagen']}")
-
+        print(f"⚠️ Producto '{producto.get('nombre', 'sin nombre')}' de {origen} sin imagen, asignando valor predeterminado")
+        producto['imagen'] = DEFAULT_IMAGE
+    
     if 'origen' not in producto:
         producto['origen'] = origen
-
+        
     return producto
+
 
 # 🔸 Mercedes Campuzano
 def scrape_mercedes_campuzano():
@@ -341,16 +333,14 @@ def scrape_tennis():
                         producto_container.select_one('span[class*="sellingPriceValue"]') or \
                         producto_container.select_one('span[class*="price"]')
             
-            link_elem = producto_container.select_one('a') or\
-                        producto_container.select_one('a[href]')
-            imagen_elem = producto_container.select_one('img') or\
-                        producto_container.select_one('img[src]')
-
+            link_elem = producto_container.select_one('a')
+            imagen_elem = producto_container.select_one('img')
             
             producto = {}
             
             if nombre_elem:
-                producto['nombre'] = re.sub(r'\s+', ' ', nombre_elem.text).strip()
+                producto['nombre'] = nombre_elem.text.strip()
+            
             if precio_elem:
                 producto['precio'] = precio_elem.text.strip()
             
@@ -375,6 +365,74 @@ def scrape_tennis():
             continue
             
     print(f"🏁 Scraping Tennis completado. Productos encontrados: {len(productos)}")
+    return productos
+
+# 🔸 Falabella (Mujer / Hombre)
+def scrape_falabella(url):
+    categoria = "Mujer" if "Mujer" in url else "Hombre"
+    print(f"🏁 Iniciando scraping de Falabella {categoria}...")
+    html = get_dynamic_html(url, wait_time=15)  # Más tiempo para Falabella
+    
+    if not html:
+        print(f"❌ No se pudo obtener HTML de Falabella {categoria}")
+        return []
+        
+    soup = BeautifulSoup(html, 'html.parser')
+    productos = []
+
+    # Detectar los contenedores de productos
+    product_containers = soup.select('li.grid-pod')
+    print(f"📦 Encontrados {len(product_containers)} contenedores de productos en Falabella {categoria}")
+
+    if not product_containers:
+        # Intentar con otros selectores si el primero falla
+        product_containers = soup.select('div[class*="pod"]') or soup.select('div[class*="product"]')
+        print(f"📦 Segundo intento: {len(product_containers)} contenedores encontrados")
+
+    for idx, producto_container in enumerate(product_containers):
+        try:
+            print(f"Procesando producto Falabella {categoria} #{idx+1}")
+            
+            nombre_elem = producto_container.select_one('b.pod-subTitle') or \
+                        producto_container.select_one('div[class*="title"]') or \
+                        producto_container.select_one('h3')
+            
+            precio_elem = producto_container.select_one('span.copy10') or \
+                        producto_container.select_one('span[class*="price"]') or \
+                        producto_container.select_one('div[class*="price"]')
+            
+            link_elem = producto_container.select_one('a')
+            imagen_elem = producto_container.select_one('img')
+            
+            producto = {}
+            
+            if nombre_elem:
+                producto['nombre'] = nombre_elem.text.strip()
+            
+            if precio_elem:
+                producto['precio'] = precio_elem.text.strip()
+            
+            if link_elem and 'href' in link_elem.attrs:
+                link = link_elem['href']
+                if not link.startswith('http'):
+                    link = 'https://www.falabella.com.co' + link
+                producto['link'] = link
+            
+            if imagen_elem and 'src' in imagen_elem.attrs:
+                producto['imagen'] = imagen_elem['src']
+            
+            producto['origen'] = f'Falabella {categoria}'
+            
+            # Validar y completar campos faltantes
+            producto = validar_producto(producto, f'Falabella {categoria}')
+            
+            productos.append(producto)
+            print(f"✅ Producto Falabella {categoria} encontrado: {producto['nombre']}")
+        except Exception as e:
+            print(f"⚠️ Error procesando producto Falabella {categoria} #{idx+1}: {e}")
+            continue
+            
+    print(f"🏁 Scraping Falabella {categoria} completado. Productos encontrados: {len(productos)}")
     return productos
 
 # 🔸 AE
@@ -412,14 +470,12 @@ def scrape_ae():
                         producto_container.select_one('span[class*="price"]')
             
             link_elem = producto_container.select_one('a')
-            imagen_elem = producto_container.select_one('img') or\
-                            producto_container.select_one('img[src]')
-
+            imagen_elem = producto_container.select_one('img')
             
             producto = {}
             
             if nombre_elem:
-                producto['nombre'] = re.sub(r'\s+', ' ', nombre_elem.text).strip()
+                producto['nombre'] = nombre_elem.text.strip()
             
             if precio_elem:
                 producto['precio'] = precio_elem.text.strip()
@@ -556,6 +612,23 @@ def scrapear_todo():
             productos += tennis_products
     except Exception as e:
         print(f"❌ Error en scrape_tennis: {e}")
+    
+    try:
+        falabella_mujer = scrape_falabella("https://www.falabella.com.co/falabella-co/category/cat2321031/Mujer")
+        print(f"Falabella mujer products: {len(falabella_mujer)}")
+        if falabella_mujer:  # Solo añadir si hay productos
+            productos += falabella_mujer
+    except Exception as e:
+        print(f"❌ Error en scrape_falabella mujer: {e}")
+    
+    try:
+        falabella_hombre = scrape_falabella("https://www.falabella.com.co/falabella-co/category/cat5521012/Hombre")
+        print(f"Falabella hombre products: {len(falabella_hombre)}")
+        if falabella_hombre:  # Solo añadir si hay productos
+            productos += falabella_hombre
+    except Exception as e:
+        print(f"❌ Error en scrape_falabella hombre: {e}")
+    
     try:
         ae_products = scrape_ae()
         print(f"AE products: {len(ae_products)}")
@@ -619,42 +692,32 @@ def scrapear_todo():
 def test_scraping():
     print("🧪 Iniciando prueba de scraping...")
     
-    # Probar cada scraper individualmente'
-    print("\n==== Mercedes Campuzano ====")
-    mercedes_products = []
-    try:
-        mercedes_products = scrape_mercedes_campuzano()
-        print(f"Mercedes Campuzano devolvió {len(mercedes_products)} productos")
-        if mercedes_products:
-            print("Ejemplo de producto Mercedes Campuzano:")
-            print(mercedes_products[0])
-    except Exception as e:
-        print(f"❌ Error en scrape_mercedes_campuzano: {e}")
-    
-    print("\n==== Arturo Calle ====")
-    arturo_products = []
-    try:
-        arturo_products = scrape_arturo_calle()
-        print(f"Arturo Calle devolvió {len(arturo_products)} productos")
-        if arturo_products:
-            print("Ejemplo de producto Arturo Calle:")
-            print(arturo_products[0])
-    except Exception as e:
-        print(f"❌ Error en scrape_arturo_calle: {e}")
-    
-    print("\n==== Americanino ====")
-    americanino_products = []
-    try:
-        americanino_products = scrape_americanino()
-        print(f"Americanino devolvió {len(americanino_products)} productos")
-        if americanino_products:
-            print("Ejemplo de producto Americanino:")
-            print(americanino_products[0])
-    except Exception as e:
-        print(f"❌ Error en scrape_americanino: {e}")
-    
+    # Probar cada scraper individualmente
     print("\n==== Tennis ====")
     tennis_products = []
+    try:
+        mercedes_products = scrape_mercedes_campuzano()
+        print(f"Mercedes Campuzano products: {len(mercedes_products)}")
+        if mercedes_products:  # Solo añadir si hay productos
+            productos += mercedes_products
+    except Exception as e:
+        print(f"❌ Error en scrape_mercedes_campuzano: {e}")
+        
+    try:
+        arturo_products = scrape_arturo_calle()
+        print(f"Arturo Calle products: {len(arturo_products)}")
+        if arturo_products:  # Solo añadir si hay productos
+            productos += arturo_products
+    except Exception as e:
+        print(f"❌ Error en scrape_arturo_calle: {e}")
+        
+    try:
+        americanino_products = scrape_americanino()
+        print(f"Americanino products: {len(americanino_products)}")
+        if americanino_products:  # Solo añadir si hay productos
+            productos += americanino_products
+    except Exception as e:
+        print(f"❌ Error en scrape_americanino: {e}")
     try:
         tennis_products = scrape_tennis()
         print(f"Tennis devolvió {len(tennis_products)} productos")
@@ -663,6 +726,28 @@ def test_scraping():
             print(tennis_products[0])
     except Exception as e:
         print(f"❌ Error en scrape_tennis: {e}")
+    
+    print("\n==== Falabella Mujer ====")
+    falabella_mujer = []
+    try:
+        falabella_mujer = scrape_falabella("https://www.falabella.com.co/falabella-co/category/cat2321031/Mujer")
+        print(f"Falabella Mujer devolvió {len(falabella_mujer)} productos")
+        if falabella_mujer:
+            print("Ejemplo de producto Falabella Mujer:")
+            print(falabella_mujer[0])
+    except Exception as e:
+        print(f"❌ Error en scrape_falabella mujer: {e}")
+    
+    print("\n==== Falabella Hombre ====")
+    falabella_hombre = []
+    try:
+        falabella_hombre = scrape_falabella("https://www.falabella.com.co/falabella-co/category/cat5521012/Hombre")
+        print(f"Falabella Hombre devolvió {len(falabella_hombre)} productos")
+        if falabella_hombre:
+            print("Ejemplo de producto Falabella Hombre:")
+            print(falabella_hombre[0])
+    except Exception as e:
+        print(f"❌ Error en scrape_falabella hombre: {e}")
     
     print("\n==== AE ====")
     ae_products = []
@@ -674,12 +759,14 @@ def test_scraping():
             print(ae_products[0])
     except Exception as e:
         print(f"❌ Error en scrape_ae: {e}")
-
+    
     print("\n🧪 Prueba de scraping completada")
     return {
-        'tennis': tennis_products,
-        'ae': ae_products,
         'mercedes': mercedes_products,
         'arturo': arturo_products,
-        'americanino': americanino_products
+        'americanino': americanino_products,
+        'tennis': tennis_products,
+        'falabella_mujer': falabella_mujer, 
+        'falabella_hombre': falabella_hombre,
+        'ae': ae_products
     }
